@@ -21,7 +21,7 @@ function fetchData(url, skip, formattedData, resolve, reject) {
                         Date: action.timestamp,
                         Sender: action.act.data.from,
                         Recipient: action.act.data.to,
-                        'Amount + Symbol': action.act.data.quantity,
+                        Quantity: action.act.data.quantity,
                         Memo: action.act.data.memo,
                         'Transaction ID': action.trx_id,
                     };
@@ -91,68 +91,77 @@ document.getElementById('accountContractForm').addEventListener('submit', functi
     new Promise(function (resolve, reject) {
         fetchData(url, 0, [], resolve, reject);
     })
-        .then(function (formattedData) {
-            var totals = {};
-            var totalSent = 0;
-            var totalReceived = 0;
-            var earliestDate = null;
-            var latestDate = null;
+    .then(function (formattedData) {
+        var sentAmounts = {};
+        var receivedAmounts = {};
+        var earliestDate = null;
+        var latestDate = null;
 
-            formattedData.forEach(function (action) {
-                var date = new Date(action.Date);
-                if (!earliestDate || date < earliestDate) {
-                    earliestDate = date;
+        formattedData.forEach(function (action) {
+            var date = new Date(action.Date);
+            if (!earliestDate || date < earliestDate) {
+                earliestDate = date;
+            }
+            if (!latestDate || date > latestDate) {
+                latestDate = date;
+            }
+
+            // Check if the quantity is present and valid
+            if (action.Quantity) {
+                var quantity = parseFloat(action.Quantity.split(' ')[0]);
+                var symbol = action.Quantity.split(' ')[1];
+
+                if (!isNaN(quantity) && symbol && /^[A-Za-z]+$/.test(symbol)) {
+                    if (action.Sender === account) {
+                        if (!sentAmounts[symbol]) {
+                            sentAmounts[symbol] = 0;
+                        }
+                        sentAmounts[symbol] += quantity;
+                    } else if (action.Recipient === account) {
+                        if (!receivedAmounts[symbol]) {
+                            receivedAmounts[symbol] = 0;
+                        }
+                        receivedAmounts[symbol] += quantity;
+                    }
                 }
-                if (!latestDate || date > latestDate) {
-                    latestDate = date;
-                }
-                var amount = parseFloat(action['Amount + Symbol'].split(' ')[0]);
-                var symbol = action['Amount + Symbol'].split(' ')[1];
-                if (!totals[symbol]) {
-                    totals[symbol] = 0;
-                }
-                totals[symbol] += amount;
-                if (action.Sender === account) {
-                    totalSent += amount;
-                } else if (action.Recipient === account) {
-                    totalReceived += amount;
-                }
-            });
-
-            var totalTransactions = formattedData.length; // Count of total transactions
-            document.getElementById('result').innerHTML =
-                'API URL: ' +
-                url +
-                '<br>Total Transactions: ' +
-                totalTransactions +
-                '<br>';
-            document.getElementById('result').innerHTML +=
-                'Totals: ' +
-                JSON.stringify(totals, null, 4) +
-                '<br>Total Sent: ' +
-                totalSent +
-                '<br>Total Received: ' +
-                totalReceived +
-                (earliestDate ? '<br>Earliest Date: ' + earliestDate.toISOString() : '') +
-                (latestDate ? '<br>Latest Date: ' + latestDate.toISOString() : '');
-
-            // Enable the "Download CSV" button after successful submit
-            document.getElementById('download').removeAttribute('disabled');
-            document.getElementById('download').style.display = 'block';
-
-            // Update the JSON data in the hidden div and show the "Show Data" button
-            jsonDataDiv.innerHTML = '<pre>' + JSON.stringify(formattedData, null, 4) + '</pre>';
-            document.getElementById('showDataBtn').style.display = 'block';
-            document.getElementById('hideDataBtn').style.display = 'none';
-
-            // Store the formatted data in window.formattedData
-            window.formattedData = formattedData;
-        })
-        .catch(function (error) {
-            console.error('Error fetching data:', error);
-            document.getElementById('result').innerHTML =
-                'Error fetching data. Please try again later.';
+            }
         });
+
+        var totalTransactions = formattedData.length; // Count of total transactions
+        document.getElementById('result').innerHTML =
+            'API URL: ' +
+            url +
+            '<br>Total Transactions: ' +
+            totalTransactions +
+            '<br>';
+
+        // Display sent amounts
+        document.getElementById('result').innerHTML +=
+            '<br>Sent Amounts:<br>' +
+            JSON.stringify(sentAmounts, null, 4);
+
+        // Display received amounts
+        document.getElementById('result').innerHTML +=
+            '<br>Received Amounts:<br>' +
+            JSON.stringify(receivedAmounts, null, 4);
+
+        // Enable the "Download CSV" button after successful submit
+        document.getElementById('download').removeAttribute('disabled');
+        document.getElementById('download').style.display = 'block';
+
+        // Update the JSON data in the hidden div and show the "Show Data" button
+        jsonDataDiv.innerHTML = '<pre>' + JSON.stringify(formattedData, null, 4) + '</pre>';
+        document.getElementById('showDataBtn').style.display = 'block';
+        document.getElementById('hideDataBtn').style.display = 'none';
+
+        // Store the formatted data in window.formattedData
+        window.formattedData = formattedData;
+    })
+    .catch(function (error) {
+        console.error('Error fetching data:', error);
+        document.getElementById('result').innerHTML =
+            'Error fetching data. Please try again later.';
+    });
 
     // Disable the "Download CSV" button while submitting
     document.getElementById('download').setAttribute('disabled', 'true');
@@ -166,7 +175,7 @@ document.getElementById('download').addEventListener('click', function () {
 
     var csv =
         'Created by Libre validator Quantum - please vote for us on Libre.\n' + // Custom text at the top
-        'Date,Sender,Recipient,Amount + Symbol,Memo,Transaction ID\n' +
+        'Date,Sender,Recipient,Quantity,Memo,Transaction ID\n' +
         window.formattedData.map(function (row) {
             return Object.values(row).join(',');
         }).join('\n');
