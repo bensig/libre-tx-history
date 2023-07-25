@@ -84,6 +84,7 @@ document.getElementById('accountContractForm').addEventListener('submit', functi
     if (contract && action) {
         url += '&filter=' + contract + '%3A' + action;
     }
+    console.log('API URL:', url); // Log the URL in the console
 
     document.getElementById('result').innerHTML = 'API URL: ' + url;
 
