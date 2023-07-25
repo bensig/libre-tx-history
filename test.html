@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Download Libre Transactions</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-md navbar-dark bg-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">
+                <img src="LibreLogo.png" alt="LibreLogo" height="20">
+            </a>
+        </div>
+    </nav>
+    <div class="container mt-5">
+        <div class="row">
+            <div class="col-md-4 mb-4">
+                <form id="accountContractForm">
+                    <div class="mb-3">
+                        <label for="network" class="form-label">1. Choose Network:</label>
+                        <small class="form-text text-muted d-block mb-2">Example: Mainnet</small>
+                        <select id="network" name="network" class="form-select form-control-sm"
+                            aria-describedby="networkHint">
+                            <option value="https://lb.libre.org">Mainnet</option>
+                            <option value="https://testnet.libre.org">Testnet</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="account" class="form-label">2. Enter Libre Account:</label>
+                        <small class="form-text text-muted d-block mb-2">Example: bank.libre</small>
+                        <input type="text" id="account" name="account" class="form-control form-control-sm"
+                            value="bank.libre" placeholder="e.g., bank.libre" aria-describedby="accountHint">
+                    </div>
+                    <div class="mb-2">
+                        <label class="form-check-label" for="filterContractAction">3. Choose date range:</label>
+                    </div>
+                    <div id="dateSelectFields" style="display: block; margin-left: 20px;"">
+                        <div class=" mb-3">
+                        <label for="afterdate" class="form-label">Start:</label>
+                        <small class="form-text text-muted d-block mb-2">Example: 2023-07-15</small>
+                        <input type="date" id="afterdate" name="afterdate" class="form-control form-control-sm"
+                            value="2023-07-15" aria-describedby="afterdateHint">
+                    </div>
+                    <div class="mb-3">
+                        <label for="beforedate" class="form-label">End:</label>
+                        <small class="form-text text-muted d-block mb-2">Example: 2023-07-22</small>
+                        <input type="date" id="beforedate" name="beforedate" class="form-control form-control-sm"
+                            value="2023-07-22" aria-describedby="beforedateHint">
+                    </div>
+            </div>
+
+            <div class="mb-3">
+                <div class="form-check mb-2">
+                    <input class="form-check-input" type="checkbox" value="" id="filterContractAction">
+                    <label class="form-check-label" for="filterContractAction">4. (Optional) Filter by specific contract
+                        and
+                        action:</label>
+                </div>
+                <div id="contractActionFields" style="display: none; margin-left: 20px;">
+                    <div class="mb-3">
+                        <label for="contract" class="form-label">Contract:</label>
+                        <small class="form-text text-muted d-block mb-2">Example: btc.ptokens</small>
+                        <input type="text" id="contract" name="contract" class="form-control form-control-sm"
+                            value="btc.ptokens" placeholder="e.g., btc.ptokens" aria-describedby="contractHint">
+                    </div>
+                    <div class="mb-3">
+                        <label for="action" class="form-label">Action:</label>
+                        <small class="form-text text-muted d-block mb-2">Example: transfer</small>
+                        <input type="text" id="action" name="action" class="form-control form-control-sm"
+                            value="transfer" placeholder="e.g., transfer" aria-describedby="actionHint">
+                    </div>
+                </div>
+            </div>
+            <button type="submit" class="btn btn-primary">Submit</button>
+            </form>
+            <div class="mb-3">
+                <!-- Download CSV button -->
+                <button id="download" class="btn btn-primary mt-3" disabled style="display: none;">Download
+                    CSV</button>
+
+                <button id="showDataBtn" class="btn btn-primary mt-3" style="display: none;">Show Data</button>
+                <button id="hideDataBtn" class="btn btn-primary mt-3" style="display: none;">Hide Data</button>
+            </div>
+        </div>
+        <div class="col-md-8">
+            <!-- Summary -->
+            <div id="summary">
+                <!-- Summary content will be shown here -->
+            </div>
+
+            <!-- Buttons for toggling JSON data -->
+            <!-- Result and JSON data -->
+            <div id="result"></div>
+            <div id="jsonData" style="display: none;">
+                <!-- JSON data will be shown here -->
+            </div>
+        </div>
+    </div>
+    </div>
+
+    <footer class="text-center mt-5">
+        <p>Created by Quantumblok - please <a href="https://dashboard.libre.org/validators" target="_blank">vote for our
+                Validator "quantum" on Libre</a></p>
+    </footer>
+
+    <script src="script.js"></script>
+    <!-- Bootstrap's JavaScript (Add the Bootstrap JS link if you want to use Bootstrap's JavaScript features) -->
+</body>
+
+</html>
