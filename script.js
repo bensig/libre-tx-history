@@ -210,3 +210,12 @@ document.getElementById('hideDataBtn').addEventListener('click', function () {
     document.getElementById('showDataBtn').style.display = 'block';
     document.getElementById('hideDataBtn').style.display = 'none';
 });
+
+document.getElementById('network').addEventListener('change', function() {
+    const customEndpoint = document.getElementById('customEndpoint');
+    if (this.value === 'custom') {
+        customEndpoint.style.display = 'block';
+    } else {
+        customEndpoint.style.display = 'none';
+    }
+});

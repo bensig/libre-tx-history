@@ -25,7 +25,14 @@
                             aria-describedby="networkHint">
                             <option value="https://lb.libre.org">Mainnet</option>
                             <option value="https://testnet.libre.org">Testnet</option>
+                            <option value="custom">Custom Endpoint</option>
                         </select>
+                        <div id="customEndpoint" class="mt-2" style="display: none;">
+                            <input type="text" id="customNetworkUrl" name="customNetworkUrl" 
+                                class="form-control form-control-sm" 
+                                placeholder="Enter custom API endpoint URL"
+                                aria-describedby="customEndpointHint">
+                        </div>
                     </div>
                     <div class="mb-3">
                         <label for="account" class="form-label">2. Enter Libre Account:</label>
