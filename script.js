@@ -41,9 +41,25 @@ function fetchData(url, skip, formattedData, resolve, reject) {
         });
 }
 
-document.getElementById('accountContractForm').addEventListener('submit', function (event) {
-    event.preventDefault();
+document.getElementById('accountContractForm').addEventListener('submit', async function (e) {
+    e.preventDefault();
+    
+    // Get the network value
+    let networkUrl = document.getElementById('network').value;
+    if (networkUrl === 'custom') {
+        networkUrl = document.getElementById('customNetworkUrl').value.trim();
+        if (!networkUrl) {
+            alert('Please enter a custom endpoint URL');
+            return;
+        }
+        // Basic URL validation
+        if (!networkUrl.startsWith('http://') && !networkUrl.startsWith('https://')) {
+            alert('Custom endpoint must start with http:// or https://');
+            return;
+        }
+    }
 
+    const account = document.getElementById('account').value;
     var beforedateInput = document.getElementById('beforedate');
     var afterdateInput = document.getElementById('afterdate');
 
@@ -62,8 +78,6 @@ document.getElementById('accountContractForm').addEventListener('submit', functi
     var jsonDataDiv = document.getElementById('jsonData');
     jsonDataDiv.style.display = 'none'; // Hide the JSON data initially
 
-    var network = document.getElementById('network').value;
-    var account = document.getElementById('account').value;
     var contract = '';
     var action = '';
 
@@ -73,7 +87,7 @@ document.getElementById('accountContractForm').addEventListener('submit', functi
     }
 
     var url =
-        network +
+        networkUrl +
         '/v2/history/get_actions?limit=1000&account=' +
         account +
         '&after=' +
